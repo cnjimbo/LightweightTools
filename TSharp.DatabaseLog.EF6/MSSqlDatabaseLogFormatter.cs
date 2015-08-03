@@ -22,19 +22,12 @@ namespace TSharp.DatabaseLog.EF6
     public class MSSqlDatabaseLogFormatter : DatabaseLogFormatter
     {
         private static ClassInstanceCounter<DbConnection> counter = new ClassInstanceCounter<DbConnection>();
-        private readonly Action<string> _writeAction;
-
+    
         public MSSqlDatabaseLogFormatter(DbContext context, Action<string> writeAction)
             : base(context, writeAction)
         {
-            _writeAction = x => Debug.Write(x);
-        }
-
-        protected override void Write(string output)
-        {
-            _writeAction(output);
-        }
-
+         
+        } 
         public override void BeganTransaction(DbConnection connection,
             BeginTransactionInterceptionContext interceptionContext)
         {

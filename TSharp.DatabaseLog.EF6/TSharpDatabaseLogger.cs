@@ -107,7 +107,7 @@ namespace TSharp.DatabaseLog.EF6
             if (_formatter == null)
             {
                 _formatter = resolver.GetService<Func<DbContext, Action<string>, DatabaseLogFormatter>>()(
-                    null, _writer == null ? (Action<string>)Console.Write : WriteThreadSafe);
+                    null, WriteThreadSafe);
 
                 DbInterception.Add(_formatter);
             }
