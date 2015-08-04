@@ -18,7 +18,8 @@ namespace TSharp.DatabaseLog.EF6
     /// </summary>
     public class TSharpDatabaseLogger : IDisposable
     {
-        private RollingFlatFileTraceListener _writer;
+        private RollingFlatFileTraceListener traceWriter;
+        private Action<String> _Writer;
         private DatabaseLogFormatter _formatter;
         private readonly object _lock = new object();
 
@@ -27,8 +28,9 @@ namespace TSharp.DatabaseLog.EF6
         /// </summary>
         public TSharpDatabaseLogger()
         {
-            _writer = new RollingFlatFileTraceListener(@"App_data\Sqls\trace.log", null, null, 1024, "HHmmssfff", "yyyyMMdd",
+            traceWriter = new RollingFlatFileTraceListener(@"App_data\Sqls\trace.log", null, null, 1024, "HHmmssfff", "yyyyMMdd",
               RollFileExistsBehavior.Increment, RollInterval.Day);
+            _Writer = traceWriter.WriteLine;
         }
 
         /// <summary>
@@ -37,21 +39,17 @@ namespace TSharp.DatabaseLog.EF6
         /// </summary>
         /// <param name="path">A path to the file to which log output will be written.</param>
         public TSharpDatabaseLogger(string path)
-            : this(path, append: false)
         {
+            traceWriter = new RollingFlatFileTraceListener(path, null, null, 1024, "HHmmssfff", "yyyyMMdd",
+             RollFileExistsBehavior.Increment, RollInterval.Day);
+            _Writer = traceWriter.WriteLine;
         }
 
-        /// <summary>
-        /// Creates a new logger that will send log output to a file.
-        /// </summary>
-        /// <param name="path">A path to the file to which log output will be written.</param>
-        /// <param name="append">True to append data to the file if it exists; false to overwrite the file.</param>
-        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-        public TSharpDatabaseLogger(string path, bool append)
+        public TSharpDatabaseLogger(TextWriter writer)
         {
-            _writer = new RollingFlatFileTraceListener(@"App_data\Sqls\trace.log", null, null, 1024, "HHmmssfff", "yyyyMMdd",
-                RollFileExistsBehavior.Increment, RollInterval.Day);
+            _Writer = writer.WriteLine;
         }
+ 
 
         /// <summary>
         /// Stops logging and closes the underlying file if output is being written to a file.
@@ -72,10 +70,10 @@ namespace TSharp.DatabaseLog.EF6
         {
             StopLogging();
 
-            if (disposing && _writer != null)
+            if (disposing && traceWriter != null)
             {
-                _writer.Dispose();
-                _writer = null;
+                traceWriter.Dispose();
+                traceWriter = null;
             }
         }
 
@@ -117,8 +115,7 @@ namespace TSharp.DatabaseLog.EF6
         {
             lock (_lock)
             {
-                _writer.WriteLine(value);
-                _writer.Flush();
+                _Writer(value);
             }
         }
     }
