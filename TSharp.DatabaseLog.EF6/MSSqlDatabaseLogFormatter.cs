@@ -228,6 +228,10 @@ namespace TSharp.DatabaseLog.EF6
         public override void Opened(DbConnection connection, DbConnectionInterceptionContext interceptionContext)
         {
             counter.Monitor(connection);
+            var list = counter.GetAllInstance();
+
+            var n = "" + list.Sum(d => (d != null && d.State != ConnectionState.Closed) ? 1 : 0);
+            Write(string.Format("--Actived connection count at {0}:  is {1}{2}", DateTimeOffset.Now, n, Environment.NewLine));
 
             if (Context == null
                 || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
@@ -273,7 +277,7 @@ namespace TSharp.DatabaseLog.EF6
 
             var list = counter.GetAllInstance();
 
-            var n = "" + list.Sum(d => (d != null && d.State != ConnectionState.Closed) ? 1 : 0);
+            var n = "" + list.Sum(d => (d != null) ? 1 : 0);
             Write(string.Format("--Actived connection count at {0}:  is {1}{2}", DateTimeOffset.Now, n, Environment.NewLine));
 
         }

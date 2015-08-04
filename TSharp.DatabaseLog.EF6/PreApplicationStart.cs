@@ -8,14 +8,17 @@ namespace TSharp.DatabaseLog.EF6
 {
     public class PreApplicationStart
     {
+        private static TSharpDatabaseLogger logger = new TSharpDatabaseLogger();
         public static void Start()
         {
-            DbConfiguration.SetConfiguration(new TSharpDbConfiguration());
-            new TSharpDatabaseLogger().StartLogging();
+            DbConfiguration.SetConfiguration(new MSSqlDbConfiguration());
+            logger.StartLogging();
 
-            //var _formatterFac = (Func<DbContext, Action<string>, DatabaseLogFormatter>)DbConfiguration.DependencyResolver.GetService(typeof(Func<DbContext, Action<string>, DatabaseLogFormatter>), null);
-            //var _formatter = _formatterFac(null, null);
-            //DbInterception.Add(_formatter);
+        }
+
+        public static void Stop()
+        {
+            logger.StopLogging();
         }
     }
 }

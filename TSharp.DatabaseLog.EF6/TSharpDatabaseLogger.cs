@@ -19,7 +19,7 @@ namespace TSharp.DatabaseLog.EF6
     public class TSharpDatabaseLogger : IDisposable
     {
         private RollingFlatFileTraceListener traceWriter;
-        private Action<String> _Writer;
+        private Action<String> innerWriter;
         private DatabaseLogFormatter _formatter;
         private readonly object _lock = new object();
 
@@ -28,9 +28,9 @@ namespace TSharp.DatabaseLog.EF6
         /// </summary>
         public TSharpDatabaseLogger()
         {
-            traceWriter = new RollingFlatFileTraceListener(@"App_data\Sqls\trace.log", null, null, 1024, "HHmmssfff", "yyyyMMdd",
+            traceWriter = new RollingFlatFileTraceListener(@"App_data\Sqls\trace.csv", null, null, 1024, "yyyyMMddHHmmss", "yyyyMMdd",
               RollFileExistsBehavior.Increment, RollInterval.Day);
-            _Writer = traceWriter.WriteLine;
+            innerWriter = traceWriter.Write;
         }
 
         /// <summary>
@@ -42,14 +42,14 @@ namespace TSharp.DatabaseLog.EF6
         {
             traceWriter = new RollingFlatFileTraceListener(path, null, null, 1024, "HHmmssfff", "yyyyMMdd",
              RollFileExistsBehavior.Increment, RollInterval.Day);
-            _Writer = traceWriter.WriteLine;
+            innerWriter = traceWriter.WriteLine;
         }
 
         public TSharpDatabaseLogger(TextWriter writer)
         {
-            _Writer = writer.WriteLine;
+            innerWriter = writer.WriteLine;
         }
- 
+
 
         /// <summary>
         /// Stops logging and closes the underlying file if output is being written to a file.
@@ -75,6 +75,8 @@ namespace TSharp.DatabaseLog.EF6
                 traceWriter.Dispose();
                 traceWriter = null;
             }
+            if (disposing && innerWriter != null)
+                innerWriter = null;
         }
 
         /// <summary>
@@ -115,7 +117,7 @@ namespace TSharp.DatabaseLog.EF6
         {
             lock (_lock)
             {
-                _Writer(value);
+                innerWriter(value);
             }
         }
     }

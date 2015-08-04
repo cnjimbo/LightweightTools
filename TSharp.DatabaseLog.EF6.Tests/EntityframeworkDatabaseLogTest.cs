@@ -11,7 +11,7 @@ using System.Data.Entity.Infrastructure;
 namespace TSharp.DatabaseLog.EF6.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class EntityframeworkDatabaseLogTest
     {
         public class Person
         {
@@ -45,7 +45,7 @@ namespace TSharp.DatabaseLog.EF6.Tests
         [TestInitialize()]
         public void Init()
         {
-            DbConfiguration.SetConfiguration(new TSharpDbConfiguration());
+            DbConfiguration.SetConfiguration(new MSSqlDbConfiguration());
             TSharpDatabaseLogger logger = new TSharpDatabaseLogger(new StringWriter(sb));
             logger.StartLogging();
 
@@ -110,6 +110,6 @@ namespace TSharp.DatabaseLog.EF6.Tests
             Console.WriteLine(sb.ToString());
         }
 
- 
+
     }
 }
