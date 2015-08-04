@@ -46,6 +46,23 @@ namespace TSharp.DatabaseLog.EF6
             }
         }
 
+        public override void Committed(DbTransaction transaction, DbTransactionInterceptionContext interceptionContext)
+        {
+            if (Context == null
+                || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
+            {
+                if (interceptionContext.Exception != null)
+                {
+                    Write(Strings.TransactionCommitErrorLog(DateTimeOffset.Now, interceptionContext.Exception.Message,
+                        Environment.NewLine));
+                }
+                else
+                {
+                    Write(Strings.TransactionCommittedLog(DateTimeOffset.Now, Environment.NewLine));
+                }
+            }
+        }
+
         public override void LogCommand<TResult>(
             DbCommand command, DbCommandInterceptionContext<TResult> interceptionContext)
         {
@@ -280,23 +297,6 @@ namespace TSharp.DatabaseLog.EF6
             var n = "" + list.Sum(d => (d != null) ? 1 : 0);
             Write(string.Format("--Actived connection count at {0}:  is {1}{2}", DateTimeOffset.Now, n, Environment.NewLine));
 
-        }
-
-        public override void Committed(DbTransaction transaction, DbTransactionInterceptionContext interceptionContext)
-        {
-            if (Context == null
-                || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
-            {
-                if (interceptionContext.Exception != null)
-                {
-                    Write(Strings.TransactionCommitErrorLog(DateTimeOffset.Now, interceptionContext.Exception.Message,
-                        Environment.NewLine));
-                }
-                else
-                {
-                    Write(Strings.TransactionCommittedLog(DateTimeOffset.Now, Environment.NewLine));
-                }
-            }
         }
 
         private string GetParameterName(DbParameter par)
