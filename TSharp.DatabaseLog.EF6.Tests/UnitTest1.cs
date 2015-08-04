@@ -13,9 +13,9 @@ namespace TSharp.DatabaseLog.EF6.Tests
     [TestClass]
     public class UnitTest1
     {
-        public class EntityTest
+        public class Person
         {
-            public EntityTest()
+            public Person()
             {
                 Id = Guid.NewGuid();
             }
@@ -28,15 +28,15 @@ namespace TSharp.DatabaseLog.EF6.Tests
                 set;
             }
         }
-        public class TestDb : DbContext
+        public class HumanResource : DbContext
         {
-            public TestDb()
+            public HumanResource()
                 : base("TestDb")
             {
 
             }
 
-            public DbSet<EntityTest> TestTable { get; set; }
+            public DbSet<Person> TestTable { get; set; }
 
 
         }
@@ -49,7 +49,7 @@ namespace TSharp.DatabaseLog.EF6.Tests
             TSharpDatabaseLogger logger = new TSharpDatabaseLogger(new StringWriter(sb));
             logger.StartLogging();
 
-            Database.SetInitializer<TestDb>(new CreateDatabaseIfNotExists<TestDb>());
+            Database.SetInitializer<HumanResource>(new CreateDatabaseIfNotExists<HumanResource>());
 
         }
 
@@ -58,26 +58,26 @@ namespace TSharp.DatabaseLog.EF6.Tests
         public void TestLogWithEntityframeworkExtend()
         {
             sb.Clear();
-            
-            using (var db = new TestDb())
+
+            using (var db = new HumanResource())
             {
-                db.TestTable.Add(new EntityTest()
+                db.TestTable.Add(new Person()
                 {
                     Name = "Name 1"
                 });
-                db.TestTable.Add(new EntityTest()
+                db.TestTable.Add(new Person()
                 {
                     Name = "Name 2"
                 });
-                db.TestTable.Add(new EntityTest()
+                db.TestTable.Add(new Person()
                 {
                     Name = "Name 3"
                 });
-                db.TestTable.Add(new EntityTest()
+                db.TestTable.Add(new Person()
                 {
                     Name = "Name 3"
                 });
-                db.TestTable.Add(new EntityTest()
+                db.TestTable.Add(new Person()
                 {
                     Name = "Name 3"
                 });
@@ -85,27 +85,31 @@ namespace TSharp.DatabaseLog.EF6.Tests
             }
 
 
-            using (var db = new TestDb())
-            {
-                db.TestTable.AsNoTracking().Where(x => x.Name=="Name 3").Delete();
-            }
+            //according batch operation (update or delete), databaselog can't log any sql statement.
 
-            using (var db = new TestDb())
+            using (var db = new HumanResource())
             {
                 db.TestTable.AsNoTracking().Where(x => x.Name == "Name 3").Delete();
-            } 
+            }
 
-            using (var db = new TestDb())
+            using (var db = new HumanResource())
+            {
+                db.TestTable.AsNoTracking().Where(x => x.Name == "Name 3").Delete();
+            }
+
+            using (var db = new HumanResource())
             {
                 db.TestTable.Where(x => x.Name == "Name 2").Delete();
             }
 
-            using (var db = new TestDb())
+            using (var db = new HumanResource())
             {
                 db.TestTable.Where(x => x.Name == "Name 2").Delete();
             }
 
             Console.WriteLine(sb.ToString());
         }
+
+ 
     }
 }
