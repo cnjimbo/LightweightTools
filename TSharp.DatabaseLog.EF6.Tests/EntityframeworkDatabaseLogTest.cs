@@ -106,6 +106,16 @@ namespace TSharp.DatabaseLog.EF6.Tests
             {
                 db.TestTable.Where(x => x.Name == "Name 2").Delete();
             }
+            using (var db = new HumanResource())
+            {
+                var q = db.TestTable.Where(x => x.Name != "Name 2");
+                var q1 = q.FutureCount();
+                var q2 = q.OrderBy(x=>x.Age).Skip(5).Take(1).Future();
+
+                var v = q1.Value;
+
+
+            }
 
             Console.WriteLine(sb.ToString());
         }
