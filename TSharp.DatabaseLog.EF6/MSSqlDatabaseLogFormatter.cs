@@ -274,6 +274,7 @@ namespace TSharp.DatabaseLog.EF6
 
         public override void Opened(DbConnection connection, DbConnectionInterceptionContext interceptionContext)
         {
+            if (!IsLogConnection) return;
             if (Context == null
                 || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
             {
@@ -304,6 +305,7 @@ namespace TSharp.DatabaseLog.EF6
 
         public override void Closed(DbConnection connection, DbConnectionInterceptionContext interceptionContext)
         {
+            if (!IsLogConnection) return;
             if (Context == null
                 || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
             {
