@@ -12,7 +12,7 @@
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
 
-using ElencySolutions.CsvHelper;
+using TSharp.CsvHelper;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -2163,7 +2163,7 @@ namespace TSharp.CsvHelper
     }
 }
 
-namespace ElencySolutions.CsvHelper
+namespace TSharp.CsvHelper
 {
     /// <summary>
     /// Class to read csv content from various sources
@@ -2503,7 +2503,7 @@ namespace ElencySolutions.CsvHelper
     }
 }
 
-namespace ElencySolutions.CsvHelper
+namespace TSharp.CsvHelper
 {
 
     /// <summary>

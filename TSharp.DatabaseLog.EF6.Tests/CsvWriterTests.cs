@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TSharp.CsvHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using ElencySolutions.CsvHelper;
+using System.IO; 
 using System.Configuration;
 using TSharp.DatabaseLog.EF6.Tests;
 using System.Data;
@@ -17,7 +16,7 @@ namespace TSharp.CsvHelper.Tests
     /// Summary description for UnitTests
     /// </summary>
     [TestClass]
-    public class UnitTests
+    public class CsvReadOrWriteTests
     {
 
         #region Test Data
@@ -48,12 +47,7 @@ data 1,""data, 2"",data 3
 
         #endregion Test Data
 
-        public UnitTests()
-        {
-            //
-            // TODO: Add constructor logic here
-            //
-        }
+        
 
         private TestContext testContextInstance;
 

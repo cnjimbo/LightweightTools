@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace TSharp.DatabaseLog.EF6
 {
@@ -14,7 +15,7 @@ namespace TSharp.DatabaseLog.EF6
 
             public int GetHashCode(WeakReference obj)
             {
-                return obj.IsAlive ? obj.Target.GetHashCode() : 0;
+                return RuntimeHelpers.GetHashCode(obj.Target);
             }
 
             public bool Equals(WeakReference<T> x, WeakReference<T> y)
