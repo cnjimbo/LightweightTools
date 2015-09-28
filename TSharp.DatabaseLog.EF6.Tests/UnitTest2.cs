@@ -16,5 +16,16 @@ namespace TSharp.DatabaseLog.EF6.Tests
             foreach (var i in Enumerable.Range(1, 20))
                 Console.WriteLine(RuntimeHelpers.GetHashCode(i));
         }
+
+
+        [TestMethod]
+        public void RandomStringGeneratorTest()
+        {
+            RandomStringGenerator rsg = new RandomStringGenerator();
+            foreach (var s in Enumerable.Range(1, 30))
+            {
+                Console.WriteLine(rsg.Generate(s % 10 + 1));
+            }
+        }
     }
 }

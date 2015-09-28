@@ -255,23 +255,6 @@ namespace TSharp.TraceListeners
     }
 
     /// <summary>
-    /// Represents the possible modes for client-side category filtering.
-    /// 
-    /// </summary>
-    public enum CategoryFilterMode
-    {
-        /// <summary>
-        /// The allow all except denied
-        /// </summary>
-        AllowAllExceptDenied,
-
-        /// <summary>
-        /// The deny all except allowed
-        /// </summary>
-        DenyAllExceptAllowed
-    }
-
-    /// <summary>
     /// Defines the frequency when the file need to be rolled.
     /// </summary>
     public enum RollInterval
