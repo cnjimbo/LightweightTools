@@ -744,7 +744,7 @@ data 1,""data, 2"",data 3
                 if (reader.ReadNextRecord())
                     filed1 = reader.Fields[0];
             }
-            Assert.AreSame(filed1, field);
+            Assert.AreEqual(filed1, field);
         }
 
         #endregion Verification methods
