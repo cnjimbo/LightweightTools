@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSharp.DatabaseLog.EF6", "TSharp.DatabaseLog.EF6\TSharp.DatabaseLog.EF6.csproj", "{1013B162-04C7-4F36-8936-724EAAAFC7C6}"
 EndProject
@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7D19DABA-64B3-4A79-822C-CA5C9B39FC49}"
 	ProjectSection(SolutionItems) = preProject
 		Local.testsettings = Local.testsettings
+		WebEssentials2015-Settings.json = WebEssentials2015-Settings.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSharp.DatabaseLog.EF6.Tests", "TSharp.DatabaseLog.EF6.Tests\TSharp.DatabaseLog.EF6.Tests.csproj", "{775F5518-2B37-47A6-AA15-54CB1744A21F}"
@@ -22,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1A3BB8
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TSharp.DatabaseLog.EF6.WebTest", "TSharp.DatabaseLog.EF6.WebTest\TSharp.DatabaseLog.EF6.WebTest.csproj", "{45F729C8-8F27-4E81-A889-BCD14C9F9302}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Runner", "Runner\Runner.csproj", "{386D910F-C66D-426B-8864-319E8618819D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +48,10 @@ Global
 		{45F729C8-8F27-4E81-A889-BCD14C9F9302}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45F729C8-8F27-4E81-A889-BCD14C9F9302}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45F729C8-8F27-4E81-A889-BCD14C9F9302}.Release|Any CPU.Build.0 = Release|Any CPU
+		{386D910F-C66D-426B-8864-319E8618819D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{386D910F-C66D-426B-8864-319E8618819D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{386D910F-C66D-426B-8864-319E8618819D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{386D910F-C66D-426B-8864-319E8618819D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
