@@ -25,7 +25,14 @@
 
         public string FileName { get; set; }
 
-
+        [Usage()]
+        public static IEnumerable<Example> Usage
+        {
+            get
+            {
+                yield return new Example("Example",  new RunnerOptions() { FileName="notepad" , UserName="apac\\tangj15", Domain="", Arguments="\\p" });
+            }
+        }
 
     }
 
