@@ -1,7 +1,7 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Runner
+﻿namespace Runner
 {
+    using System.Runtime.CompilerServices;
+
     public abstract class StateMessage<TState, TValue>
 
     {
@@ -11,13 +11,15 @@ namespace Runner
             this.Value = value;
         }
 
-        public TState State { get; private set; }
-        public TValue Value { get; private set; }
+        public TState State { get; }
+
+        public TValue Value { get; }
 
         public static bool operator ==(StateMessage<TState, TValue> a, StateMessage<TState, TValue> b)
         {
             return a != null && b != null && a.State != null && a.State.Equals(b.State);
         }
+
         public static bool operator !=(StateMessage<TState, TValue> a, StateMessage<TState, TValue> b)
         {
             return !(a != null && b != null && a.State != null && a.State.Equals(b.State));
@@ -45,20 +47,21 @@ namespace Runner
         }
     }
 
-
     public enum OkError
     {
         Ok,
-        Error,
+
+        Error
     }
 
     public class OkErrorString : StateMessage<OkError, string>
     {
-        public OkErrorString(OkError state, string value) : base(state, value)
+        public static OkErrorString OK = new OkErrorString(OkError.Ok, null);
+
+        public OkErrorString(OkError state, string value)
+            : base(state, value)
         {
         }
-
-        public static OkErrorString OK = new OkErrorString(OkError.Ok, null);
 
         public static OkErrorString Ok(string value)
         {
@@ -70,6 +73,4 @@ namespace Runner
             return new OkErrorString(OkError.Error, value);
         }
     }
-
-
 }

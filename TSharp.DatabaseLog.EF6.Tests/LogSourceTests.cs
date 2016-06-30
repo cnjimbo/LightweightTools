@@ -1,37 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TSharp.TraceListeners;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-namespace TSharp.TraceListeners.Tests
+﻿namespace TSharp.TraceListeners.Tests
 {
-    [TestClass()]
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    [TestClass]
     public class LogSourceTests
     {
-        [TestMethod()]
+        [TestMethod]
         public void LogSourceTest()
         {
-          
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void LogSourceTest1()
         {
-             
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void WriteLineTest()
         {
-            
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void DisposeTest()
         {
-            
         }
     }
 }

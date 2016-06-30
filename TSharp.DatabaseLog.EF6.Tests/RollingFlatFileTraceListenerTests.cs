@@ -1,59 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TSharp.TraceListeners;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TSharp.DatabaseLog.EF6;
-namespace TSharp.TraceListeners.Tests
+﻿namespace TSharp.TraceListeners.Tests
 {
-    [TestClass()]
+    using System;
+    using System.Linq;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using TSharp.DatabaseLog.EF6;
+
+    [TestClass]
     public class RollingFlatFileTraceListenerTests
     {
-        [TestMethod()]
+        [TestMethod]
         public void RollingFlatFileTraceListenerTest()
         {
-            RollingFlatFileTraceListener writer = new RollingFlatFileTraceListener("trace.log", null, null, 512,
-                "HHmmss", "yyyyMMdd", RollFileExistsBehavior.Increment, RollInterval.Day);
+            var writer = new RollingFlatFileTraceListener(
+                "trace.log",
+                null,
+                null,
+                512,
+                "HHmmss",
+                "yyyyMMdd",
+                RollFileExistsBehavior.Increment,
+                RollInterval.Day);
 
             writer.WriteLine("rrrrrr");
 
             writer.Flush();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void RollingFlatFileTraceListenerTest1()
         {
-           // Assert.Fail();
+            // Assert.Fail();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void WriteLineTest()
         {
-           // Assert.Fail();
+            // Assert.Fail();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void WriteTest()
         {
-           // Assert.Fail();
+            // Assert.Fail();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void WriteCsvLineTest()
         {
-            RandomStringGenerator rsg = new RandomStringGenerator(true, true, true, true);
+            var rsg = new RandomStringGenerator(true, true, true, true);
 
-            RollingFlatFileTraceListener writer = new RollingFlatFileTraceListener("trace.log", null, null, 512,
-              "HHmmss", "yyyyMMdd", RollFileExistsBehavior.Increment, RollInterval.Day);
+            var writer = new RollingFlatFileTraceListener(
+                "trace.log",
+                null,
+                null,
+                512,
+                "HHmmss",
+                "yyyyMMdd",
+                RollFileExistsBehavior.Increment,
+                RollInterval.Day);
 
+            foreach (var i in Enumerable.Range(1, 3)) writer.WriteCsvLine(Enumerable.Range(1, 8).Select(x => rsg.Generate(3, 6)).ToArray());
             foreach (var i in Enumerable.Range(1, 3))
-                writer.WriteCsvLine(Enumerable.Range(1, 8).Select(x => rsg.Generate(3, 6)).ToArray());
-            foreach (var i in Enumerable.Range(1, 3))
-                writer.WriteCsvLine(Enumerable.Range(1, 8).Select(x => rsg.Generate(2) + Environment.NewLine + rsg.Generate(1, 2)).ToArray());
+                writer.WriteCsvLine(
+                    Enumerable.Range(1, 8)
+                        .Select(x => rsg.Generate(2) + Environment.NewLine + rsg.Generate(1, 2))
+                        .ToArray());
             writer.Flush();
-
         }
     }
 }

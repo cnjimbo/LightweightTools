@@ -1,29 +1,20 @@
-using System.Data.Entity;
-
 namespace TSharp.DatabaseLog.EF6
 {
+    using System.Data.Entity;
+
     public class MSSqlDbConfiguration : DbConfiguration
     {
-        public static bool IsLogConnection
-        {
-            get;
-            set;
-        }
-
-        public static bool IsLogCommand
-        {
-            get;
-            set;
-        }
-
-        public static bool IsLogTransaction { get; set; }
-
-        public static long LogCommandLimitedMilliseconds { get; set; }
-         
-
         public MSSqlDbConfiguration()
         {
             SetDatabaseLogFormatter((context, writer) => new MSSqlDatabaseLogFormatter(context, writer));
         }
+
+        public static bool IsLogConnection { get; set; }
+
+        public static bool IsLogCommand { get; set; }
+
+        public static bool IsLogTransaction { get; set; }
+
+        public static long LogCommandLimitedMilliseconds { get; set; }
     }
 }

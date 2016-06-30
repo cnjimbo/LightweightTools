@@ -1,58 +1,30 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System.Text;
-using System.Data.Entity;
-using System.ComponentModel.DataAnnotations;
-using EntityFramework;
-using System.Linq;
-using EntityFramework.Extensions;
-using System.Data.Entity.Infrastructure;
-namespace TSharp.DatabaseLog.EF6.Tests
+﻿namespace TSharp.DatabaseLog.EF6.Tests
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+    using System.Data.Entity;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+
+    using EntityFramework.Extensions;
+
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
     [TestClass]
     public class EntityframeworkDatabaseLogTest
     {
-        public class Person
-        {
-            public Person()
-            {
-                Id = Guid.NewGuid();
-            }
-            [Key]
-            public Guid Id { get; set; }
-            public string Name { get; set; }
-            public int Age
-            {
-                get;
-                set;
-            }
-        }
-        public class HumanResource : DbContext
-        {
-            public HumanResource()
-                : base("TestDb")
-            {
+        private readonly StringBuilder sb = new StringBuilder();
 
-            }
-
-            public DbSet<Person> TestTable { get; set; }
-
-
-        }
-
-        StringBuilder sb = new StringBuilder();
-        [TestInitialize()]
+        [TestInitialize]
         public void Init()
         {
             DbConfiguration.SetConfiguration(new MSSqlDbConfiguration());
-            TSharpDatabaseLogger logger = new TSharpDatabaseLogger(new StringWriter(sb));
+            var logger = new TSharpDatabaseLogger(new StringWriter(sb));
             logger.StartLogging();
 
-            Database.SetInitializer<HumanResource>(new CreateDatabaseIfNotExists<HumanResource>());
-
+            Database.SetInitializer(new CreateDatabaseIfNotExists<HumanResource>());
         }
-
 
         [TestMethod]
         public void TestLogWithEntityframeworkExtend()
@@ -61,29 +33,13 @@ namespace TSharp.DatabaseLog.EF6.Tests
 
             using (var db = new HumanResource())
             {
-                db.TestTable.Add(new Person()
-                {
-                    Name = "Name 1"
-                });
-                db.TestTable.Add(new Person()
-                {
-                    Name = "Name 2"
-                });
-                db.TestTable.Add(new Person()
-                {
-                    Name = "Name 3"
-                });
-                db.TestTable.Add(new Person()
-                {
-                    Name = "Name 3"
-                });
-                db.TestTable.Add(new Person()
-                {
-                    Name = "Name 3"
-                });
+                db.TestTable.Add(new Person { Name = "Name 1" });
+                db.TestTable.Add(new Person { Name = "Name 2" });
+                db.TestTable.Add(new Person { Name = "Name 3" });
+                db.TestTable.Add(new Person { Name = "Name 3" });
+                db.TestTable.Add(new Person { Name = "Name 3" });
                 db.SaveChanges();
             }
-
 
             //according batch operation (update or delete), databaselog can't log any sql statement.
 
@@ -110,16 +66,37 @@ namespace TSharp.DatabaseLog.EF6.Tests
             {
                 var q = db.TestTable.Where(x => x.Name != "Name 2");
                 var q1 = q.FutureCount();
-                var q2 = q.OrderBy(x=>x.Age).Skip(5).Take(1).Future();
+                var q2 = q.OrderBy(x => x.Age).Skip(5).Take(1).Future();
 
                 var v = q1.Value;
-
-
             }
 
             Console.WriteLine(sb.ToString());
         }
 
+        public class Person
+        {
+            public Person()
+            {
+                Id = Guid.NewGuid();
+            }
 
+            [Key]
+            public Guid Id { get; set; }
+
+            public string Name { get; set; }
+
+            public int Age { get; set; }
+        }
+
+        public class HumanResource : DbContext
+        {
+            public HumanResource()
+                : base("TestDb")
+            {
+            }
+
+            public DbSet<Person> TestTable { get; set; }
+        }
     }
 }

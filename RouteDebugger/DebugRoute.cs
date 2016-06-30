@@ -1,19 +1,14 @@
-﻿using System.Web.Routing;
-
-namespace RouteDebug
+﻿namespace RouteDebug
 {
+    using System.Web.Routing;
+
     public class DebugRoute : Route
     {
-        private static readonly DebugRoute singleton = new DebugRoute();
-
         private DebugRoute()
             : base("{*catchall}", new DebugRouteHandler())
         {
         }
 
-        public static DebugRoute Singleton
-        {
-            get { return singleton; }
-        }
+        public static DebugRoute Singleton { get; } = new DebugRoute();
     }
 }

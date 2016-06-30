@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-
-namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
+﻿namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
 {
+    using System.Web.Mvc;
+
     public class HomeController : Controller
     {
         public ActionResult Index()

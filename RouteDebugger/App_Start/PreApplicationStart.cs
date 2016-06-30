@@ -1,11 +1,13 @@
 ﻿using System.Web;
-using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+
 using RouteDebug;
 
 [assembly: PreApplicationStartMethod(typeof(PreApplicationStart), "Start")]
 
 namespace RouteDebug
 {
+    using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+
     public class PreApplicationStart
     {
         public static void Start()

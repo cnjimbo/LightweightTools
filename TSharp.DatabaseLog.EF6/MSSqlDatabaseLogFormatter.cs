@@ -1,60 +1,78 @@
 ﻿#region Using
 
-using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Data;
-using System.Data.Common;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure.Interception;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using TSharp.DatabaseLog.EF6;
+
 
 #endregion
 
-
 namespace TSharp.DatabaseLog.EF6
 {
+    using System;
+    using System.Data;
+    using System.Data.Common;
+    using System.Data.Entity;
+    using System.Data.Entity.Infrastructure.Interception;
+    using System.Data.SqlClient;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    using Enumerable = System.Linq.Enumerable;
 
     public class MSSqlDatabaseLogFormatter : DatabaseLogFormatter
     {
+        public MSSqlDatabaseLogFormatter(DbContext context, Action<string> writer)
+            : base(context, writer)
+        {
+        }
 
         public bool IsLogConnection
         {
-            get { return MSSqlDbConfiguration.IsLogConnection; }
+            get
+            {
+                return MSSqlDbConfiguration.IsLogConnection;
+            }
         }
 
         public bool IsLogCommand
         {
-            get { return MSSqlDbConfiguration.IsLogCommand; }
+            get
+            {
+                return MSSqlDbConfiguration.IsLogCommand;
+            }
         }
 
-        public bool IsLogTransaction { get { return MSSqlDbConfiguration.IsLogTransaction; } }
+        public bool IsLogTransaction
+        {
+            get
+            {
+                return MSSqlDbConfiguration.IsLogTransaction;
+            }
+        }
 
-        public long LogCommandLimitedMilliseconds { get { return MSSqlDbConfiguration.LogCommandLimitedMilliseconds; } }
+        public long LogCommandLimitedMilliseconds
+        {
+            get
+            {
+                return MSSqlDbConfiguration.LogCommandLimitedMilliseconds;
+            }
+        }
 
-
-        public MSSqlDatabaseLogFormatter(DbContext context, Action<string> writer)
-            : base(context, writer)
-        { }
-        public override void BeganTransaction(DbConnection connection,
+        public override void BeganTransaction(
+            DbConnection connection,
             BeginTransactionInterceptionContext interceptionContext)
         {
             if (!IsLogTransaction) return;
-            if (Context == null
-                || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
+            if (Context == null || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 if (interceptionContext.Exception != null)
                 {
-                    sb.Append(Strings.TransactionStartErrorLog(DateTimeOffset.Now, interceptionContext.Exception.Message,
-                        Environment.NewLine));
+                    sb.Append(
+                        Strings.TransactionStartErrorLog(
+                            DateTimeOffset.Now,
+                            interceptionContext.Exception.Message,
+                            Environment.NewLine));
                 }
                 else
                 {
@@ -67,14 +85,16 @@ namespace TSharp.DatabaseLog.EF6
         public override void Committed(DbTransaction transaction, DbTransactionInterceptionContext interceptionContext)
         {
             if (!IsLogTransaction) return;
-            if (Context == null
-                || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
+            if (Context == null || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 if (interceptionContext.Exception != null)
                 {
-                    sb.Append(Strings.TransactionCommitErrorLog(DateTimeOffset.Now, interceptionContext.Exception.Message,
-                        Environment.NewLine));
+                    sb.Append(
+                        Strings.TransactionCommitErrorLog(
+                            DateTimeOffset.Now,
+                            interceptionContext.Exception.Message,
+                            Environment.NewLine));
                 }
                 else
                 {
@@ -86,11 +106,11 @@ namespace TSharp.DatabaseLog.EF6
         }
 
         public StringBuilder GetLogCommand<TResult>(
-            DbCommand command, DbCommandInterceptionContext<TResult> interceptionContext)
+            DbCommand command,
+            DbCommandInterceptionContext<TResult> interceptionContext)
         {
-
-            StringBuilder sb = new StringBuilder(Environment.NewLine);
-            foreach (var parameter in command.Parameters.OfType<DbParameter>())
+            var sb = new StringBuilder(Environment.NewLine);
+            foreach (var parameter in Enumerable.OfType<DbParameter>(command.Parameters))
             {
                 sb.Append(GetLogParameter(command, interceptionContext, parameter));
                 sb.Append(Environment.NewLine);
@@ -130,7 +150,7 @@ namespace TSharp.DatabaseLog.EF6
                 outstring.Append("EXECUTE ");
                 outstring.Append(command.CommandText ?? "<null>");
 
-                foreach (var parameter in command.Parameters.OfType<DbParameter>())
+                foreach (var parameter in Enumerable.OfType<DbParameter>(command.Parameters))
                 {
                     outstring.AppendLine()
                         .Append(GetParameterName(parameter))
@@ -143,7 +163,6 @@ namespace TSharp.DatabaseLog.EF6
                 sb.Append(Environment.NewLine);
             }
 
-
             sb.Append(
                 interceptionContext.IsAsync
                     ? Strings.CommandLogAsync(DateTimeOffset.Now, Environment.NewLine)
@@ -151,18 +170,20 @@ namespace TSharp.DatabaseLog.EF6
             return sb;
         }
 
-        public override void LogResult<TResult>(DbCommand command,
+        public override void LogResult<TResult>(
+            DbCommand command,
             DbCommandInterceptionContext<TResult> interceptionContext)
         {
             if (!IsLogCommand) return;
-            if (LogCommandLimitedMilliseconds > 0 && LogCommandLimitedMilliseconds > Stopwatch.ElapsedMilliseconds)
-                return;
-            StringBuilder sb = GetLogCommand<TResult>(command, interceptionContext);
+            if (LogCommandLimitedMilliseconds > 0 && LogCommandLimitedMilliseconds > Stopwatch.ElapsedMilliseconds) return;
+            var sb = GetLogCommand(command, interceptionContext);
             if (interceptionContext.Exception != null)
             {
                 sb.Append(
                     Strings.CommandLogFailed(
-                        Stopwatch.ElapsedMilliseconds, interceptionContext.Exception.Message, Environment.NewLine));
+                        Stopwatch.ElapsedMilliseconds,
+                        interceptionContext.Exception.Message,
+                        Environment.NewLine));
             }
             else if (interceptionContext.TaskStatus.HasFlag(TaskStatus.Canceled))
             {
@@ -172,10 +193,8 @@ namespace TSharp.DatabaseLog.EF6
             {
                 var result = interceptionContext.Result;
                 var resultString = (object)result == null
-                    ? "null"
-                    : (result is DbDataReader)
-                        ? result.GetType().Name
-                        : result.ToString();
+                                       ? "null"
+                                       : result is DbDataReader ? result.GetType().Name : result.ToString();
                 sb.Append(Strings.CommandLogComplete(Stopwatch.ElapsedMilliseconds, resultString, Environment.NewLine));
             }
             sb.Append("GO");
@@ -185,18 +204,19 @@ namespace TSharp.DatabaseLog.EF6
         }
 
         /// <summary>
-        /// Logs the parameter.
+        ///     Logs the parameter.
         /// </summary>
         /// <typeparam name="TResult">The type of the t result.</typeparam>
         /// <param name="command">The command.</param>
         /// <param name="interceptionContext">The interception context.</param>
         /// <param name="parameter">The parameter.</param>
-        public StringBuilder GetLogParameter<TResult>(DbCommand command,
-            DbCommandInterceptionContext<TResult> interceptionContext, DbParameter p)
+        public StringBuilder GetLogParameter<TResult>(
+            DbCommand command,
+            DbCommandInterceptionContext<TResult> interceptionContext,
+            DbParameter p)
         {
             var parameter = p as SqlParameter;
-            if (parameter == null)
-                throw new Exception("当前数据库不是MS-Sql Server无法记录参数信息。");
+            if (parameter == null) throw new Exception("当前数据库不是MS-Sql Server无法记录参数信息。");
             var sbDeclare = new StringBuilder();
             // -- Name: [Value] (Type = {}, Direction = {}, IsNullable = {}, Size = {}, Precision = {} Scale = {})
             //var sbInfo = new StringBuilder();
@@ -228,8 +248,8 @@ namespace TSharp.DatabaseLog.EF6
                             CultureInfo.InvariantCulture,
                             "DECLARE {0} {1}({2})",
                             GetParameterName(parameter),
-                            parameter.SqlDbType, parameter.Size > 4000 ? "max" : "" + parameter.Size
-                            );
+                            parameter.SqlDbType,
+                            parameter.Size > 4000 ? "max" : "" + parameter.Size);
                         break;
                     default:
                         sbDeclare.AppendFormat(
@@ -237,8 +257,7 @@ namespace TSharp.DatabaseLog.EF6
                             "DECLARE {0} {1}({2})",
                             GetParameterName(parameter),
                             parameter.SqlDbType,
-                            parameter.Size
-                            );
+                            parameter.Size);
                         break;
                 }
             }
@@ -247,7 +266,8 @@ namespace TSharp.DatabaseLog.EF6
                 sbDeclare.AppendFormat(
                     CultureInfo.InvariantCulture,
                     "DECLARE {0} {1}",
-                    GetParameterName(parameter), parameter.SqlDbType);
+                    GetParameterName(parameter),
+                    parameter.SqlDbType);
 
                 // GetSqlDeclareType(parameter.DbType));
             }
@@ -264,8 +284,7 @@ namespace TSharp.DatabaseLog.EF6
 
             //sbInfo.Append(")");
 
-            sbDeclare.
-                AppendFormat(CultureInfo.InvariantCulture, " = {0}", GetValueText(parameter));
+            sbDeclare.AppendFormat(CultureInfo.InvariantCulture, " = {0}", GetValueText(parameter));
 
             //  sbDeclare.AppendLine();
 
@@ -275,8 +294,7 @@ namespace TSharp.DatabaseLog.EF6
         public override void Opened(DbConnection connection, DbConnectionInterceptionContext interceptionContext)
         {
             if (!IsLogConnection) return;
-            if (Context == null
-                || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
+            if (Context == null || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
             {
                 var sb = new StringBuilder();
                 if (interceptionContext.Exception != null)
@@ -284,8 +302,12 @@ namespace TSharp.DatabaseLog.EF6
                     sb.Append(
                         interceptionContext.IsAsync
                             ? Strings.ConnectionOpenErrorLogAsync(
-                                DateTimeOffset.Now, interceptionContext.Exception.Message, Environment.NewLine)
-                            : Strings.ConnectionOpenErrorLog(DateTimeOffset.Now, interceptionContext.Exception.Message,
+                                DateTimeOffset.Now,
+                                interceptionContext.Exception.Message,
+                                Environment.NewLine)
+                            : Strings.ConnectionOpenErrorLog(
+                                DateTimeOffset.Now,
+                                interceptionContext.Exception.Message,
                                 Environment.NewLine));
                 }
                 else if (interceptionContext.TaskStatus.HasFlag(TaskStatus.Canceled))
@@ -306,14 +328,16 @@ namespace TSharp.DatabaseLog.EF6
         public override void Closed(DbConnection connection, DbConnectionInterceptionContext interceptionContext)
         {
             if (!IsLogConnection) return;
-            if (Context == null
-                || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
+            if (Context == null || interceptionContext.DbContexts.Contains(Context, ReferenceEquals))
             {
                 var sb = new StringBuilder();
                 if (interceptionContext.Exception != null)
                 {
-                    sb.Append(Strings.ConnectionCloseErrorLog(DateTimeOffset.Now, interceptionContext.Exception.Message,
-                        Environment.NewLine));
+                    sb.Append(
+                        Strings.ConnectionCloseErrorLog(
+                            DateTimeOffset.Now,
+                            interceptionContext.Exception.Message,
+                            Environment.NewLine));
                 }
                 else
                 {
@@ -339,8 +363,8 @@ namespace TSharp.DatabaseLog.EF6
             {
                 return "'" + value + "'";
             }
-            if (db.SqlDbType == SqlDbType.DateTime || db.SqlDbType == SqlDbType.DateTime2 ||
-                db.SqlDbType == SqlDbType.DateTimeOffset)
+            if (db.SqlDbType == SqlDbType.DateTime || db.SqlDbType == SqlDbType.DateTime2
+                || db.SqlDbType == SqlDbType.DateTimeOffset)
             {
                 return string.Format("'{0}'", value);
             }
@@ -397,8 +421,11 @@ namespace TSharp.DatabaseLog.EF6
 
             public static string ConnectionOpenErrorLogAsync(DateTimeOffset now, string message, string newLine)
             {
-                return string.Format("--Failed to open connection asynchronously at {0} with error: {1}{2}", now,
-                    message, newLine);
+                return string.Format(
+                    "--Failed to open connection asynchronously at {0} with error: {1}{2}",
+                    now,
+                    message,
+                    newLine);
             }
 
             public static string ConnectionOpenErrorLog(DateTimeOffset now, string message, string newLine)

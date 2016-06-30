@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TSharp.DatabaseLog.EF6.WebTest.Models
+﻿namespace TSharp.DatabaseLog.EF6.WebTest.Models
 {
+    using System.ComponentModel.DataAnnotations;
+
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
@@ -13,6 +13,7 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Models
     public class ExternalLoginListViewModel
     {
         public string Action { get; set; }
+
         public string ReturnUrl { get; set; }
     }
 

@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Reflection;
-using System.Text;
-using System.Web;
-using System.Web.Hosting;
-using System.Web.Routing;
-
-namespace RouteDebug
+﻿namespace RouteDebug
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Reflection;
+    using System.Text;
+    using System.Web;
+    using System.Web.Hosting;
+    using System.Web.Routing;
+
     public class DebugHttpHandler : IHttpHandler
     {
-        private static readonly string objFormat =
-            @"
+        private static readonly string objFormat = @"
 <div style='border: 1px solid #6600FF;  margin:5px 5px 5px 5px;'>
 {0} : {1}</div>
 ";
@@ -29,24 +28,26 @@ namespace RouteDebug
             _virtualPathProvider = virtualPathProvider ?? HostingEnvironment.VirtualPathProvider;
         }
 
-
         public bool IsReusable
         {
-            get { return true; }
+            get
+            {
+                return true;
+            }
         }
 
         public void ProcessRequest(HttpContext context)
         {
-            HttpRequest request = context.Request;
+            var request = context.Request;
 
-            if (!IsRoutedRequest(request) || context.Response.ContentType == null ||
-                !context.Response.ContentType.Equals("text/html", StringComparison.OrdinalIgnoreCase))
+            if (!IsRoutedRequest(request) || context.Response.ContentType == null
+                || !context.Response.ContentType.Equals("text/html", StringComparison.OrdinalIgnoreCase))
             {
                 return;
             }
 
-            string generatedUrlInfo = string.Empty;
-            RequestContext requestContext = request.RequestContext;
+            var generatedUrlInfo = string.Empty;
+            var requestContext = request.RequestContext;
 
             if (request.QueryString.Count > 0)
             {
@@ -56,12 +57,11 @@ namespace RouteDebug
                 {
                     if (key != null)
                     {
-                        if (!rvalues.ContainsKey(key))
-                            rvalues.Add(key, request.QueryString[key]);
+                        if (!rvalues.ContainsKey(key)) rvalues.Add(key, request.QueryString[key]);
                     }
                 }
 
-                VirtualPathData vpd = baseRoute.GetVirtualPath(requestContext, rvalues);
+                var vpd = baseRoute.GetVirtualPath(requestContext, rvalues);
                 if (vpd != null)
                 {
                     generatedUrlInfo =
@@ -75,8 +75,7 @@ namespace RouteDebug
                 }
             }
 
-            const string htmlFormat =
-                @"<html>
+            const string htmlFormat = @"<html>
 <div id=""haackroutedebugger"" style=""background-color: #fff; padding-bottom: 10px;"">
     <style>
         #haackroutedebugger, #haackroutedebugger td, #haackroutedebugger th {{background-color: #fff; font-family: verdana, helvetica, san-serif; font-size: small;}}
@@ -129,26 +128,28 @@ namespace RouteDebug
         <p><strong>AppRelativeCurrentExecutionFilePath</strong>: {3}</p>
     </div>
 </div>";
-            string routeDataRows = string.Empty;
+            var routeDataRows = string.Empty;
 
-            RouteData routeData = requestContext.RouteData;
-            RouteValueDictionary routeValues = routeData.Values;
-            RouteBase matchedRouteBase = routeData.Route;
+            var routeData = requestContext.RouteData;
+            var routeValues = routeData.Values;
+            var matchedRouteBase = routeData.Route;
 
             var routes = new StringBuilder();
             using (RouteTable.Routes.GetReadLock())
             {
-                foreach (RouteBase routeBase in RouteTable.Routes)
+                foreach (var routeBase in RouteTable.Routes)
                 {
-                    bool matchesCurrentRequest = (routeBase.GetRouteData(requestContext.HttpContext) != null);
-                    string matchText = string.Format(@"<span{0}>{1}</span>", BoolStyle(matchesCurrentRequest),
-                                                     matchesCurrentRequest);
-                    string url = "n/a";
-                    string defaults = "n/a";
-                    string constraints = "n/a";
-                    string dataTokens = "n/a";
+                    var matchesCurrentRequest = routeBase.GetRouteData(requestContext.HttpContext) != null;
+                    var matchText = string.Format(
+                        @"<span{0}>{1}</span>",
+                        BoolStyle(matchesCurrentRequest),
+                        matchesCurrentRequest);
+                    var url = "n/a";
+                    var defaults = "n/a";
+                    var constraints = "n/a";
+                    var dataTokens = "n/a";
 
-                    Route route = CastRoute(routeBase);
+                    var route = CastRoute(routeBase);
 
                     if (route != null)
                     {
@@ -156,57 +157,62 @@ namespace RouteDebug
                         defaults = FormatDictionary(route.Defaults);
                         constraints = FormatDictionary(route.Constraints);
                         dataTokens = FormatDictionary(route.DataTokens);
-                        routes.AppendFormat(@"<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>"
-                                            , matchText
-                                            , url
-                                            , defaults
-                                            , constraints
-                                            , dataTokens);
+                        routes.AppendFormat(
+                            @"<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td></tr>",
+                            matchText,
+                            url,
+                            defaults,
+                            constraints,
+                            dataTokens);
                     }
                     else
                     {
-                        routes.Append(string.Format(@"<tr><td>{0}</td><td colspan='4'>{1}</td></tr>"
-                                                    , matchText,
-                                                    string.Format(objFormat, "Cur. Route:" + routeBase.GetType().Name,
-                                                                  GetOjbect(routeBase))));
+                        routes.Append(
+                            string.Format(
+                                @"<tr><td>{0}</td><td colspan='4'>{1}</td></tr>",
+                                matchText,
+                                string.Format(objFormat, "Cur. Route:" + routeBase.GetType().Name, GetOjbect(routeBase))));
                     }
                 }
             }
 
-            string matchedRouteUrl = "n/a";
+            var matchedRouteUrl = "n/a";
 
-            string dataTokensRows = "";
+            var dataTokensRows = "";
 
             if (!(matchedRouteBase is DebugRoute))
             {
-                foreach (string key in routeValues.Keys)
+                foreach (var key in routeValues.Keys)
                 {
                     routeDataRows += string.Format("\t<tr><td>{0}</td><td>{1}&nbsp;</td></tr>", key, routeValues[key]);
                 }
 
-                foreach (string key in routeData.DataTokens.Keys)
+                foreach (var key in routeData.DataTokens.Keys)
                 {
-                    dataTokensRows += string.Format("\t<tr><td>{0}</td><td>{1}&nbsp;</td></tr>", key,
-                                                    routeData.DataTokens[key]);
+                    dataTokensRows += string.Format(
+                        "\t<tr><td>{0}</td><td>{1}&nbsp;</td></tr>",
+                        key,
+                        routeData.DataTokens[key]);
                 }
 
                 var matchedRoute = matchedRouteBase as Route;
 
-                if (matchedRoute != null)
-                    matchedRouteUrl = matchedRoute.Url;
+                if (matchedRoute != null) matchedRouteUrl = matchedRoute.Url;
             }
             else
             {
                 matchedRouteUrl = string.Format("<strong{0}>NO MATCH!</strong>", BoolStyle(false));
             }
 
-            context.Response.Write(string.Format(htmlFormat
-                                                 , routeDataRows
-                                                 , matchedRouteUrl
-                                                 , routes
-                                                 , request.AppRelativeCurrentExecutionFilePath
-                                                 , dataTokensRows
-                                                 , generatedUrlInfo));
+            context.Response.Write(
+                string.Format(
+                    htmlFormat,
+                    routeDataRows,
+                    matchedRouteUrl,
+                    routes,
+                    request.AppRelativeCurrentExecutionFilePath,
+                    dataTokensRows,
+                    generatedUrlInfo));
         }
 
         public static StringBuilder GetOjbect(object value)
@@ -215,34 +221,32 @@ namespace RouteDebug
             var route = value as Route;
             if (route != null)
             {
-                string url = "n/a";
-                string defaults = "n/a";
-                string constraints = "n/a";
-                string dataTokens = "n/a";
+                var url = "n/a";
+                var defaults = "n/a";
+                var constraints = "n/a";
+                var dataTokens = "n/a";
                 url = route.Url;
                 defaults = FormatDictionary(route.Defaults);
                 constraints = FormatDictionary(route.Constraints);
                 dataTokens = FormatDictionary(route.DataTokens);
                 result.Append(
                     string.Format(
-                        @"<div style='border:1px solid #000;  margin:5px 5px 5px 5px;'>Url:{0} defaults：{1} constraints：{2} dataTokens：{3}</div>"
-                        , url
-                        , defaults
-                        , constraints
-                        , dataTokens));
+                        @"<div style='border:1px solid #000;  margin:5px 5px 5px 5px;'>Url:{0} defaults：{1} constraints：{2} dataTokens：{3}</div>",
+                        url,
+                        defaults,
+                        constraints,
+                        dataTokens));
             }
-            else if (Convert.GetTypeCode(value) != TypeCode.Object)
-                result.AppendFormat("{0} ({1})", value, value.GetType().Name);
+            else if (Convert.GetTypeCode(value) != TypeCode.Object) result.AppendFormat("{0} ({1})", value, value.GetType().Name);
 
             else
                 foreach (PropertyDescriptor a in TypeDescriptor.GetProperties(value))
                 {
-                    object pValue = a.GetValue(value);
+                    var pValue = a.GetValue(value);
                     result.AppendFormat(objFormat, a.Name, GetOjbect(pValue));
                 }
             return result;
         }
-
 
         private Route CastRoute(RouteBase routeBase)
         {
@@ -250,8 +254,8 @@ namespace RouteDebug
             if (route == null)
             {
                 // cheat!
-                Type type = routeBase.GetType();
-                PropertyInfo property = type.GetProperty("__DebugRoute", BindingFlags.NonPublic | BindingFlags.Instance);
+                var type = routeBase.GetType();
+                var property = type.GetProperty("__DebugRoute", BindingFlags.NonPublic | BindingFlags.Instance);
                 if (property != null)
                 {
                     route = property.GetValue(routeBase, null) as Route;
@@ -262,21 +266,19 @@ namespace RouteDebug
 
         private static string FormatDictionary(IDictionary<string, object> values)
         {
-            if (values == null)
-                return "(null)";
+            if (values == null) return "(null)";
 
             if (values.Count == 0)
             {
                 return "(empty)";
             }
 
-            string display = string.Empty;
-            foreach (string key in values.Keys)
+            var display = string.Empty;
+            foreach (var key in values.Keys)
             {
                 display += string.Format("{0} = {1}, ", key, FormatObject(values[key]));
             }
-            if (display.EndsWith(", "))
-                display = display.Substring(0, display.Length - 2);
+            if (display.EndsWith(", ")) display = display.Substring(0, display.Length - 2);
             return display;
         }
 
@@ -315,7 +317,7 @@ namespace RouteDebug
 
         private bool IsRoutedRequest(HttpRequest request)
         {
-            string path = request.AppRelativeCurrentExecutionFilePath;
+            var path = request.AppRelativeCurrentExecutionFilePath;
             if (path != "~/" && (_virtualPathProvider.FileExists(path) || _virtualPathProvider.DirectoryExists(path)))
             {
                 return false;

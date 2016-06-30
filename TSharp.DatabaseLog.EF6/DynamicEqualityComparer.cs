@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 namespace TSharp.DatabaseLog.EF6
 {
+    using System;
+    using System.Collections.Generic;
+
     internal sealed class DynamicEqualityComparer<T> : IEqualityComparer<T>
         where T : class
     {

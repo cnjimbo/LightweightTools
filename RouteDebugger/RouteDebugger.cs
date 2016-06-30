@@ -1,15 +1,15 @@
-﻿using System.Web.Routing;
-
-namespace RouteDebug
+﻿namespace RouteDebug
 {
+    using System.Web.Routing;
+
     public static class RouteDebugger
     {
         public static void RewriteRoutesForTesting(RouteCollection routes)
         {
             using (routes.GetReadLock())
             {
-                bool foundDebugRoute = false;
-                foreach (RouteBase routeBase in routes)
+                var foundDebugRoute = false;
+                foreach (var routeBase in routes)
                 {
                     var route = routeBase as Route;
                     if (route != null)
@@ -17,8 +17,7 @@ namespace RouteDebug
                         route.RouteHandler = new DebugRouteHandler();
                     }
 
-                    if (route == DebugRoute.Singleton)
-                        foundDebugRoute = true;
+                    if (route == DebugRoute.Singleton) foundDebugRoute = true;
                 }
                 if (!foundDebugRoute)
                 {

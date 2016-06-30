@@ -1,8 +1,8 @@
-﻿using System.Web;
-using System.Web.Routing;
-
-namespace RouteDebug
+﻿namespace RouteDebug
 {
+    using System.Web;
+    using System.Web.Routing;
+
     public class DebugRouteHandler : IRouteHandler
     {
         public IHttpHandler GetHttpHandler(RequestContext requestContext)

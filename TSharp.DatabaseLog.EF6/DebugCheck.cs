@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-
-namespace TSharp.DatabaseLog.EF6
+﻿namespace TSharp.DatabaseLog.EF6
 {
+    using System.Diagnostics;
+
     internal class DebugCheck
     {
         [Conditional("DEBUG")]

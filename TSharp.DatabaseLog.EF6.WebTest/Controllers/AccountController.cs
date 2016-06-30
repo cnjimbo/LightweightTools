@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
-using Owin;
-using TSharp.DatabaseLog.EF6.WebTest.Models;
-
-namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
+﻿namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
 {
+    using System.Threading.Tasks;
+    using System.Web;
+    using System.Web.Mvc;
+
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.Owin;
+    using Microsoft.Owin.Security;
+
+    using TSharp.DatabaseLog.EF6.WebTest.Models;
+
     [Authorize]
     public class AccountController : Controller
     {
@@ -28,7 +24,8 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
             UserManager = userManager;
         }
 
-        public ApplicationUserManager UserManager {
+        public ApplicationUserManager UserManager
+        {
             get
             {
                 return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
@@ -63,10 +60,7 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
                     await SignInAsync(user, model.RememberMe);
                     return RedirectToLocal(returnUrl);
                 }
-                else
-                {
-                    ModelState.AddModelError("", "用户名或密码无效。");
-                }
+                this.ModelState.AddModelError("", "用户名或密码无效。");
             }
 
             // 如果我们进行到这一步时某个地方出错，则重新显示表单
@@ -90,11 +84,11 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
-                IdentityResult result = await UserManager.CreateAsync(user, model.Password);
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInAsync(user, isPersistent: false);
+                    await SignInAsync(user, false);
 
                     // 有关如何启用帐户确认和密码重置的详细信息，请访问 http://go.microsoft.com/fwlink/?LinkID=320771
                     // 发送包含此链接的电子邮件
@@ -104,10 +98,7 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
 
                     return RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    AddErrors(result);
-                }
+                this.AddErrors(result);
             }
 
             // 如果我们进行到这一步时某个地方出错，则重新显示表单
@@ -119,21 +110,18 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
         {
-            if (userId == null || code == null) 
+            if (userId == null || code == null)
             {
                 return View("Error");
             }
 
-            IdentityResult result = await UserManager.ConfirmEmailAsync(userId, code);
+            var result = await UserManager.ConfirmEmailAsync(userId, code);
             if (result.Succeeded)
             {
                 return View("ConfirmEmail");
             }
-            else
-            {
-                AddErrors(result);
-                return View();
-            }
+            this.AddErrors(result);
+            return this.View();
         }
 
         //
@@ -154,7 +142,7 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByNameAsync(model.Email);
-                if (user == null || !(await UserManager.IsEmailConfirmedAsync(user.Id)))
+                if (user == null || !await this.UserManager.IsEmailConfirmedAsync(user.Id))
                 {
                     ModelState.AddModelError("", "用户不存在或未确认。");
                     return View();
@@ -179,13 +167,13 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         {
             return View();
         }
-	
+
         //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
-            if (code == null) 
+            if (code == null)
             {
                 return View("Error");
             }
@@ -207,16 +195,13 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
                     ModelState.AddModelError("", "找不到用户。");
                     return View();
                 }
-                IdentityResult result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
+                var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("ResetPasswordConfirmation", "Account");
                 }
-                else
-                {
-                    AddErrors(result);
-                    return View();
-                }
+                this.AddErrors(result);
+                return this.View();
             }
 
             // 如果我们进行到这一步时某个地方出错，则重新显示表单
@@ -238,11 +223,13 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         public async Task<ActionResult> Disassociate(string loginProvider, string providerKey)
         {
             ManageMessageId? message = null;
-            IdentityResult result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
+            var result =
+                await
+                UserManager.RemoveLoginAsync(User.Identity.GetUserId(), new UserLoginInfo(loginProvider, providerKey));
             if (result.Succeeded)
             {
                 var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                await SignInAsync(user, isPersistent: false);
+                await SignInAsync(user, false);
                 message = ManageMessageId.RemoveLoginSuccess;
             }
             else
@@ -256,12 +243,13 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         // GET: /Account/Manage
         public ActionResult Manage(ManageMessageId? message)
         {
-            ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "你的密码已更改。"
-                : message == ManageMessageId.SetPasswordSuccess ? "已设置你的密码。"
-                : message == ManageMessageId.RemoveLoginSuccess ? "已删除外部登录名。"
-                : message == ManageMessageId.Error ? "出现错误。"
-                : "";
+            ViewBag.StatusMessage = message == ManageMessageId.ChangePasswordSuccess
+                                        ? "你的密码已更改。"
+                                        : message == ManageMessageId.SetPasswordSuccess
+                                              ? "已设置你的密码。"
+                                              : message == ManageMessageId.RemoveLoginSuccess
+                                                    ? "已删除外部登录名。"
+                                                    : message == ManageMessageId.Error ? "出现错误。" : "";
             ViewBag.HasLocalPassword = HasPassword();
             ViewBag.ReturnUrl = Url.Action("Manage");
             return View();
@@ -273,30 +261,29 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Manage(ManageUserViewModel model)
         {
-            bool hasPassword = HasPassword();
+            var hasPassword = HasPassword();
             ViewBag.HasLocalPassword = hasPassword;
             ViewBag.ReturnUrl = Url.Action("Manage");
             if (hasPassword)
             {
                 if (ModelState.IsValid)
                 {
-                    IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
+                    var result =
+                        await
+                        UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
                     if (result.Succeeded)
                     {
                         var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                        await SignInAsync(user, isPersistent: false);
+                        await SignInAsync(user, false);
                         return RedirectToAction("Manage", new { Message = ManageMessageId.ChangePasswordSuccess });
                     }
-                    else
-                    {
-                        AddErrors(result);
-                    }
+                    this.AddErrors(result);
                 }
             }
             else
             {
                 // 用户没有密码，因此将删除由于缺少 OldPassword 字段而导致的所有验证错误
-                ModelState state = ModelState["OldPassword"];
+                var state = ModelState["OldPassword"];
                 if (state != null)
                 {
                     state.Errors.Clear();
@@ -304,15 +291,12 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    IdentityResult result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
+                    var result = await UserManager.AddPasswordAsync(User.Identity.GetUserId(), model.NewPassword);
                     if (result.Succeeded)
                     {
                         return RedirectToAction("Manage", new { Message = ManageMessageId.SetPasswordSuccess });
                     }
-                    else
-                    {
-                        AddErrors(result);
-                    }
+                    this.AddErrors(result);
                 }
             }
 
@@ -328,7 +312,9 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         public ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // 请求重定向到外部登录提供程序
-            return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
+            return new ChallengeResult(
+                provider,
+                Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
         //
@@ -346,16 +332,15 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
             var user = await UserManager.FindAsync(loginInfo.Login);
             if (user != null)
             {
-                await SignInAsync(user, isPersistent: false);
+                await SignInAsync(user, false);
                 return RedirectToLocal(returnUrl);
             }
-            else
-            {
-                // 如果用户没有帐户，则提示该用户创建帐户
-                ViewBag.ReturnUrl = returnUrl;
-                ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
-            }
+            // 如果用户没有帐户，则提示该用户创建帐户
+            this.ViewBag.ReturnUrl = returnUrl;
+            this.ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
+            return this.View(
+                "ExternalLoginConfirmation",
+                new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
         }
 
         //
@@ -377,7 +362,7 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
             {
                 return RedirectToAction("Manage", new { Message = ManageMessageId.Error });
             }
-            IdentityResult result = await UserManager.AddLoginAsync(User.Identity.GetUserId(), loginInfo.Login);
+            var result = await UserManager.AddLoginAsync(User.Identity.GetUserId(), loginInfo.Login);
             if (result.Succeeded)
             {
                 return RedirectToAction("Manage");
@@ -390,7 +375,9 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
+        public async Task<ActionResult> ExternalLoginConfirmation(
+            ExternalLoginConfirmationViewModel model,
+            string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -405,21 +392,21 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
-                IdentityResult result = await UserManager.CreateAsync(user);
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
                     {
-                        await SignInAsync(user, isPersistent: false);
-                        
+                        await SignInAsync(user, false);
+
                         // 有关如何启用帐户确认和密码重置的详细信息，请访问 http://go.microsoft.com/fwlink/?LinkID=320771
                         // 发送包含此链接的电子邮件
                         // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                         // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                         // SendEmail(user.Email, callbackUrl, "确认你的帐户", "请单击此链接确认你的帐户");
-                        
+
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -453,7 +440,7 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         {
             var linkedAccounts = UserManager.GetLogins(User.Identity.GetUserId());
             ViewBag.ShowRemoveButton = HasPassword() || linkedAccounts.Count > 1;
-            return (ActionResult)PartialView("_RemoveAccountPartial", linkedAccounts);
+            return this.PartialView("_RemoveAccountPartial", linkedAccounts);
         }
 
         protected override void Dispose(bool disposing)
@@ -467,6 +454,7 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         }
 
         #region 帮助程序
+
         // 用于在添加外部登录名时提供 XSRF 保护
         private const string XsrfKey = "XsrfId";
 
@@ -481,7 +469,9 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         private async Task SignInAsync(ApplicationUser user, bool isPersistent)
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-            AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, await user.GenerateUserIdentityAsync(UserManager));
+            AuthenticationManager.SignIn(
+                new AuthenticationProperties { IsPersistent = isPersistent },
+                await user.GenerateUserIdentityAsync(UserManager));
         }
 
         private void AddErrors(IdentityResult result)
@@ -510,8 +500,11 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
         public enum ManageMessageId
         {
             ChangePasswordSuccess,
+
             SetPasswordSuccess,
+
             RemoveLoginSuccess,
+
             Error
         }
 
@@ -521,15 +514,13 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
             {
                 return Redirect(returnUrl);
             }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            return this.RedirectToAction("Index", "Home");
         }
 
         private class ChallengeResult : HttpUnauthorizedResult
         {
-            public ChallengeResult(string provider, string redirectUri) : this(provider, redirectUri, null)
+            public ChallengeResult(string provider, string redirectUri)
+                : this(provider, redirectUri, null)
             {
             }
 
@@ -540,13 +531,15 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
                 UserId = userId;
             }
 
-            public string LoginProvider { get; set; }
-            public string RedirectUri { get; set; }
-            public string UserId { get; set; }
+            public string LoginProvider { get; }
+
+            public string RedirectUri { get; }
+
+            public string UserId { get; }
 
             public override void ExecuteResult(ControllerContext context)
             {
-                var properties = new AuthenticationProperties() { RedirectUri = RedirectUri };
+                var properties = new AuthenticationProperties { RedirectUri = RedirectUri };
                 if (UserId != null)
                 {
                     properties.Dictionary[XsrfKey] = UserId;
@@ -554,6 +547,7 @@ namespace TSharp.DatabaseLog.EF6.WebTest.Controllers
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
         }
+
         #endregion
     }
 }
