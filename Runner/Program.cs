@@ -12,12 +12,12 @@
 
     internal class Program
     {
-        private static readonly Func<IOptions, OkErrorString> SelfcallSuccessHandler = opts =>
+        private static readonly Func<IOptions, StateString> SelfcallSuccessHandler = opts =>
             {
                 if (!string.IsNullOrWhiteSpace(opts.FileName) && File.Exists(opts.FileName))
                 {
                     var status = WindowsSecurityUtil.RunAsAdministrator(opts, Assembly.GetExecutingAssembly().Location);
-                    if (status == PermissionCheck.RestartTryGet) return OkErrorString.OK;
+                    if (status == PermissionCheck.RestartTryGet) return StateString.OK;
                     var startInfo = new ProcessStartInfo { FileName = opts.FileName };
                     if (!string.IsNullOrEmpty(opts.UserName))
                     {
@@ -51,7 +51,7 @@
                     {
                         if (status == PermissionCheck.NoAdministrator)
                         {
-                            return OkErrorString.Error(" fail to try get administrator permission ");
+                            return StateString.Error(" fail to try get administrator permission ");
                         }
                     }
 
@@ -64,9 +64,9 @@
 
                     p.Start();
 
-                    return OkErrorString.OK;
+                    return StateString.OK;
                 }
-                return OkErrorString.Error($"file must exist. '{opts.FileName}'");
+                return StateString.Error($"file must exist. '{opts.FileName}'");
                 //Console.ReadLine();
                 // exe file must be existing.
                 ;
@@ -81,9 +81,9 @@
                 var outMessage = result.MapResult(
                     SelfcallSuccessHandler,
                     errors =>
-                    OkErrorString.Error(string.Join(Environment.NewLine, errors.Select(x => x.Tag.ToString()))));
+                    StateString.Error(string.Join(Environment.NewLine, errors.Select(x => x.Tag.ToString()))));
 
-                if (outMessage.State == OkError.Error)
+                if (outMessage.State == State.Fail)
                 {
                     Console.WriteLine(outMessage);
                     Console.WriteLine(HelpText.RenderUsageText(result));

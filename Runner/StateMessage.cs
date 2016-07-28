@@ -1,7 +1,7 @@
-﻿namespace Runner
-{
-    using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
+namespace Runner
+{
     public abstract class StateMessage<TState, TValue>
 
     {
@@ -44,33 +44,6 @@
         public override string ToString()
         {
             return Value as string ?? Value.ToString();
-        }
-    }
-
-    public enum OkError
-    {
-        Ok,
-
-        Error
-    }
-
-    public class OkErrorString : StateMessage<OkError, string>
-    {
-        public static OkErrorString OK = new OkErrorString(OkError.Ok, null);
-
-        public OkErrorString(OkError state, string value)
-            : base(state, value)
-        {
-        }
-
-        public static OkErrorString Ok(string value)
-        {
-            return new OkErrorString(OkError.Ok, value);
-        }
-
-        public static OkErrorString Error(string value)
-        {
-            return new OkErrorString(OkError.Error, value);
         }
     }
 }
