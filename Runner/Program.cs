@@ -59,8 +59,7 @@
                     startInfo.UseShellExecute = false;
                     startInfo.LoadUserProfile = true;
 
-                    var p = new Process();
-                    p.StartInfo = startInfo;
+                    var p = new Process {StartInfo = startInfo};
 
                     p.Start();
 
