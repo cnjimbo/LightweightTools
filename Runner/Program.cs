@@ -8,6 +8,7 @@
     using System.Security;
 
     using CommandLine;
+    using CommandLine.Text;
 
     internal class Program
     {
@@ -72,17 +73,19 @@
                     if (!string.IsNullOrEmpty(opts.Arguments)) startInfo.Arguments = opts.Arguments;
                     startInfo.UseShellExecute = false;
                     startInfo.LoadUserProfile = true;
-                    startInfo.RedirectStandardError = true;
-                    startInfo.RedirectStandardOutput = true;
+                    //startInfo.RedirectStandardError = true;
+                    //startInfo.RedirectStandardOutput = true;
                     using (var p = new Process { StartInfo = startInfo })
                     {
                         p.Start();
                         p.WaitForExit();
-                        if (p.ExitCode == 0) return RunState.OK;
-                        var str = $@"{p.StandardOutput.ReadToEnd()}
-{p.StandardOutput.ReadToEnd()}";
+                        if (p.ExitCode == 0)
+                            return RunState.OK;
+                        //                        var str = $@"{p.StandardOutput.ReadToEnd()}
+                        //{p.StandardOutput.ReadToEnd()}";
 
-                        return RunState.Fail(str);
+                        // return RunState.Fail(str);
+                        return RunState.Fail("Unkown ERROR");
                     }
                 }
                 return RunState.Fail($"file must exist. '{opts.FileName}'");
@@ -90,6 +93,9 @@
 
         public static int Main(string[] args)
         {
+            Console.Title = "Run a file -- Copyright © 2016 Power by Tang jingbo";
+            Console.WriteLine("Copyright © 2016 Power by Tang jingbo");
+
             var parser = Parser.Default;
 
             try
