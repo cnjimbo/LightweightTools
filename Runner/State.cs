@@ -4,6 +4,8 @@
     {
         Success,
 
+        ParseError,
+
         Fail
     }
 }
