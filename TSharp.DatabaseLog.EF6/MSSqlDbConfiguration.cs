@@ -6,7 +6,7 @@ namespace TSharp.DatabaseLog.EF6
     {
         public MSSqlDbConfiguration()
         {
-            SetDatabaseLogFormatter((context, writer) => new MSSqlDatabaseLogFormatter(context, writer));
+            SetDatabaseLogFormatter((context, writer) => new MsSqlDatabaseLogFormatter(context, writer));
         }
 
         public static bool IsLogConnection { get; set; }

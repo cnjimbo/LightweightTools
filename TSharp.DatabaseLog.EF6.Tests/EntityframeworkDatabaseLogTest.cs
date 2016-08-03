@@ -19,6 +19,7 @@
         [TestInitialize]
         public void Init()
         {
+            MSSqlDbConfiguration.IsLogCommand = true;
             DbConfiguration.SetConfiguration(new MSSqlDbConfiguration());
             var logger = new TSharpDatabaseLogger(new StringWriter(sb));
             logger.StartLogging();
