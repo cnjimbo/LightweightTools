@@ -16,7 +16,7 @@
 
 #endregion
 
-namespace TSharp.TraceListeners
+namespace TSharp.DatabaseLog.EF6.TraceListeners
 {
     using System;
     using System.Globalization;
@@ -1884,7 +1884,7 @@ namespace TSharp.TraceListeners
 
 #region CSV Helper
 
-namespace TSharp.CsvHelper
+namespace TSharp.DatabaseLog.EF6.CsvHelper
 {
     using System;
     using System.Collections.Generic;
@@ -2174,7 +2174,7 @@ namespace TSharp.CsvHelper
     }
 }
 
-namespace TSharp.CsvHelper
+namespace TSharp.DatabaseLog.EF6.CsvHelper
 {
     using System;
     using System.Collections.Generic;
@@ -2516,7 +2516,7 @@ namespace TSharp.CsvHelper
     }
 }
 
-namespace TSharp.CsvHelper
+namespace TSharp.DatabaseLog.EF6.CsvHelper
 {
     using System;
     using System.Collections.Generic;

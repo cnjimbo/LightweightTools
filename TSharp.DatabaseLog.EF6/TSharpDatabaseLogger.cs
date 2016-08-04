@@ -7,8 +7,7 @@ namespace TSharp.DatabaseLog.EF6
     using System.Data.Entity.Infrastructure.DependencyResolution;
     using System.Data.Entity.Infrastructure.Interception;
     using System.IO;
-
-    using TSharp.TraceListeners;
+    using TraceListeners;
 
     /// <summary>
     ///     A simple logger for logging SQL and other database operations to the console or a file.

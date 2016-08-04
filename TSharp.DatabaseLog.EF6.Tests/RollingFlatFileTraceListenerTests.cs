@@ -6,6 +6,7 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using TSharp.DatabaseLog.EF6;
+    using DatabaseLog.EF6.TraceListeners;
 
     [TestClass]
     public class RollingFlatFileTraceListenerTests

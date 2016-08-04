@@ -9,6 +9,7 @@
     using System.Text;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using DatabaseLog.EF6.CsvHelper;
 
     /// <summary>
     ///     Summary description for UnitTests
