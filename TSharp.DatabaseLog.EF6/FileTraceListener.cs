@@ -1058,7 +1058,7 @@ namespace TSharp.DatabaseLog.EF6.TraceListeners
         /// </summary>
         /// <param name="fileName">The file name.</param>
         public FlatFileTraceListener(string fileName)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName))
+            : base((fileName))
         {
         }
 
@@ -1069,7 +1069,7 @@ namespace TSharp.DatabaseLog.EF6.TraceListeners
         /// <param name="header">The header.</param>
         /// <param name="footer">The footer.</param>
         public FlatFileTraceListener(string fileName, string header, string footer)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName))
+            : base((fileName))
         {
             this.header = header;
             this.footer = footer;
@@ -1101,7 +1101,7 @@ namespace TSharp.DatabaseLog.EF6.TraceListeners
         /// <param name="fileName">The file name.</param>
         /// <param name="name">The name.</param>
         public FlatFileTraceListener(string fileName, string name)
-            : base(EnvironmentHelper.ReplaceEnvironmentVariables(fileName), name)
+            : base(fileName, name)
         {
         }
 
@@ -2172,15 +2172,6 @@ namespace TSharp.DatabaseLog.EF6.CsvHelper
 
         #endregion Methods
     }
-}
-
-namespace TSharp.DatabaseLog.EF6.CsvHelper
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.IO;
-    using System.Text;
 
     /// <summary>
     ///     Class to read csv content from various sources
@@ -2514,14 +2505,6 @@ namespace TSharp.DatabaseLog.EF6.CsvHelper
 
         #endregion Methods
     }
-}
-
-namespace TSharp.DatabaseLog.EF6.CsvHelper
-{
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Text;
 
     /// <summary>
     ///     Class to hold csv data

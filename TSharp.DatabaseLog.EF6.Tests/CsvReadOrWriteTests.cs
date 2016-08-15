@@ -530,10 +530,6 @@
             return csvFile;
         }
 
-        [TestMethod]
-        public void MyTestMethod()
-        {
-        }
 
         private static string RootFileNameAndEnsureTargetFolderExists(string fileName)
         {

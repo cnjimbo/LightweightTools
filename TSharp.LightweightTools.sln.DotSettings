@@ -32,7 +32,9 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=A096F16D_002D7A5C_002D417B_002DB6D4_002D4159025F8F00_002Fd_003AScripts_002Ff_003Ajquery_002Eui_002Ewidget_002Ejs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=A096F16D_002D7A5C_002D417B_002DB6D4_002D4159025F8F00_002Fd_003AScripts_002Ff_003Amodernizr_002D2_002E6_002E2_002Ejs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=A096F16D_002D7A5C_002D417B_002DB6D4_002D4159025F8F00_002Fd_003AScripts_002Ff_003Arespond_002Ejs/@EntryIndexedValue">ExplicitlyExcluded</s:String>
-	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">OFF</s:String>
+	
+	
+	
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/DoNotShowVsBulb/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeThisQualifier/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CoercedEqualsUsing/@EntryIndexedValue">DO_NOT_SHOW</s:String>
