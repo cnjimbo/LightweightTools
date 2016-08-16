@@ -5,8 +5,6 @@ services:
 branches:
   only:
     - master
-    - release
-    - dev
     - /^(.*\/)?ci-.*$/
 build_script:
   - build.cmd verify
