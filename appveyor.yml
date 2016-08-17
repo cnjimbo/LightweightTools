@@ -1,13 +1,16 @@
-init:
-  - git config --global core.autocrlf true
-services:
-  - mssql2014
+version: 1.9.0-ci{build}
+
 branches:
   only:
     - master
-    - /^(.*\/)?ci-.*$/
-build_script:
-  - build.cmd verify
-clone_depth: 1
-test: off
-deploy: off
+
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "1.9.0"
+  assembly_file_version: "1.9.0"
+  assembly_informational_version: "1.9.0-ci{build}"
+
+build:
+  project: src/DotLiquid.sln
+  publish_nuget: true
