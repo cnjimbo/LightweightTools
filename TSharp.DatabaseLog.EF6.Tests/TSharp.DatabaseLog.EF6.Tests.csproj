@@ -69,10 +69,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="CsvReadOrWriteTests.cs" />
     <Compile Include="DataTable.cs" />
     <Compile Include="LogSourceTests.cs" />
-    <Compile Include="RollingFlatFileTraceListenerTests.cs" />
     <Compile Include="EntityframeworkDatabaseLogTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTest2.cs" />
