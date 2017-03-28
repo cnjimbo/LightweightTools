@@ -7,23 +7,26 @@
 *.sln.docstates
 
 # Build results
-
 [Dd]ebug/
+[Dd]ebugPublic/
 [Rr]elease/
 x64/
 build/
+bld/
 [Bb]in/
 [Oo]bj/
-
-# Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
-!packages/*/build/
-
+[Pp]ackages/*
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
+#NUNIT
+*.VisualState.xml
+TestResult.xml
+
 *_i.c
 *_p.c
+*_i.h
 *.ilk
 *.meta
 *.obj
@@ -43,8 +46,11 @@ build/
 *.vssscc
 .builds
 *.pidb
-*.log
+*.svclog
 *.scc
+
+# Chutzpah Test files
+_Chutzpah*
 
 # Visual C++ cache files
 ipch/
@@ -59,12 +65,19 @@ ipch/
 *.vsp
 *.vspx
 
+# TFS 2012 Local Workspace
+$tf/
+
 # Guidance Automation Toolkit
 *.gpState
 
 # ReSharper is a .NET coding add-in
 _ReSharper*/
 *.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JustCode is a .NET coding addin-in
+.JustCode
 
 # TeamCity is a build add-in
 _TeamCity*
@@ -74,7 +87,15 @@ _TeamCity*
 
 # NCrunch
 *.ncrunch*
+_NCrunch_*
 .*crunch*.local.xml
+
+# MightyMoose
+*.mm.*
+AutoTest.Net/
+
+# Web workbench (sass)
+.sass-cache/
 
 # Installshield output folder
 [Ee]xpress/
@@ -93,14 +114,21 @@ DocProject/Help/html
 publish/
 
 # Publish Web Output
-*.Publish.xml
+*.[Pp]ublish.xml
+*.azurePubxml
 
 # NuGet Packages Directory
 ## TODO: If you have NuGet Package Restore enabled, uncomment the next line
-#packages/
+#packages/*
+## TODO: If the tool you use requires repositories.config, also uncomment the next line
+#!packages/repositories.config
+
+# Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
+# This line needs to be after the ignore of the build folder (and the packages folder if the line above has been uncommented)
+!packages/build/
 
 # Windows Azure Build Output
-csx
+csx/
 *.build.csdef
 
 # Windows Store app package directory
@@ -114,9 +142,10 @@ ClientBin/
 ~$*
 *~
 *.dbmdl
-*.[Pp]ublish.xml
+*.dbproj.schemaview
 *.pfx
 *.publishsettings
+node_modules/
 
 # RIA/Silverlight projects
 Generated_Code/
@@ -132,11 +161,13 @@ UpgradeLog*.htm
 App_Data/*.mdf
 App_Data/*.ldf
 
+# Business Intelligence projects
+*.rdl.data
+*.bim.layout
+*.bim_*.settings
 
-#LightSwitch generated files
-GeneratedArtifacts/
-_Pvt_Extensions/
-ModelManifest.xml
+# Microsoft Fakes
+FakesAssemblies/
 
 # =========================
 # Windows detritus
@@ -152,6 +183,13 @@ Desktop.ini
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
-# Mac desktop service store files
-.DS_Store
-/packages
+*/[Aa]pp_[Dd]ata/*
+!*/[Aa]pp_[Dd]ata/[Ww]eb.config
+!*/[Aa]pp_[Dd]ata/Git/
+!*/[Aa]pp_[Dd]ata/note.txt
+!*/[Aa]pp_[Dd]ata/Repositories/note.txt
+
+*/[Bb]in/*
+!*/[Bb]in/[Ww]eb.config
+*/.vs/*
+.vs/*

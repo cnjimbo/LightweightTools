@@ -7,7 +7,7 @@ namespace TSharp.DatabaseLog.EF6
     using System.Data.Entity.Infrastructure.DependencyResolution;
     using System.Data.Entity.Infrastructure.Interception;
     using System.IO;
-    using static Tsharp.SimpleFileLogger;
+    using static Tsharp.SimpleLogger;
 
     /// <summary>
     ///     A simple logger for logging SQL and other database operations to the console or a file.
@@ -49,9 +49,10 @@ namespace TSharp.DatabaseLog.EF6
         {
             traceWriter = new RollingFlatFileTraceListener(
                 path,
+                ()=>
+                "--"+DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss.ffffK"),
                 null,
-                null,
-                1024,
+                5120,
                 "HHmmssfff",
                 "yyyyMMdd",
                 RollFileExistsBehavior.Increment,

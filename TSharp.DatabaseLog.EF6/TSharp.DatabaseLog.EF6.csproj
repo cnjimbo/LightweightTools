@@ -52,11 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\SingleFileLogger\SingleFileLogger\SimpleFileLogger.cs">
-      <Link>SimpleFileLogger.cs</Link>
-    </Compile>
     <Compile Include="MSSqlDatabaseLogFormatter.cs" />
     <Compile Include="RandomStringGenerator.cs" />
+    <Compile Include="SimpleLogger.cs" />
     <Compile Include="TSharpDatabaseLogger.cs" />
     <Compile Include="ClassInstanceCounter.cs" />
     <Compile Include="DebugCheck.cs" />

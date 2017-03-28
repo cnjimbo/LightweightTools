@@ -75,29 +75,31 @@
             Console.WriteLine(sb.ToString());
         }
 
-        public class Person
+    }
+
+
+    public class Person
+    {
+        public Person()
         {
-            public Person()
-            {
-                Id = Guid.NewGuid();
-            }
-
-            [Key]
-            public Guid Id { get; set; }
-
-            public string Name { get; set; }
-
-            public int Age { get; set; }
+            Id = Guid.NewGuid();
         }
 
-        public class HumanResource : DbContext
-        {
-            public HumanResource()
-                : base("TestDb")
-            {
-            }
+        [Key]
+        public Guid Id { get; set; }
 
-            public DbSet<Person> TestTable { get; set; }
+        public string Name { get; set; }
+
+        public int Age { get; set; }
+    }
+
+    public class HumanResource : DbContext
+    {
+        public HumanResource()
+            : base("TestDb")
+        {
         }
+
+        public DbSet<Person> TestTable { get; set; }
     }
 }
